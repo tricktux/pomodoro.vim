@@ -51,12 +51,25 @@ function! pomo#stop() abort
 endfunction
 
 function! pomo#start(name) abort
-	if s:pomodoro_started != 1
+	if s:pomodoro_started < 1
 		let s:pomo_name = a:name
 		let s:pomo_id = timer_start(g:pomodoro_time_work * 60 * 1000, function('pomo#rest'))
 		let s:pomodoro_started_at = localtime()
 		let s:pomodoro_started = 1 
 		echom "Pomodoro Started at: " . strftime('%I:%M:%S %m/%d/%Y')
+		return
+	elseif s:pomodoro_started == 1
+		let msg = 'Pomodoro ' . s:pomo_name . ' is active'
+	else " s:pomodoro_started > 1
+		let msg = 'Pomodoro ' . s:pomo_name . ' is on break'
+	endif
+
+	let ch = confirm(msg, "&Stop\n&Restart\n&Cancel", 3)
+	if ch == 1
+		call pomo#stop()
+	if ch == 2
+		call pomo#stop()
+		call pomo#start(s:pomo_name)
 	endif
 endfunction
 
