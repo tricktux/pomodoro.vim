@@ -63,7 +63,6 @@ function! pomo#start(name) abort
 	else " s:pomodoro_started > 1
 		let msg = 'Pomodoro ' . s:pomo_name . ' is on break'
 	endif
-
 	let ch = confirm(msg, "&Stop\n&Restart\n&Cancel", 3)
 	if ch == 1
 		call pomo#stop()
@@ -74,16 +73,13 @@ function! pomo#start(name) abort
 endfunction
 
 function! pomo#rest(timer) abort
+	let msg = "Pomodoro " . s:pomo_name . " ended at " . strftime("%c") . 
+				\ ", duration: " . g:pomodoro_time_work . " minutes"
+	call pomo#log(msg)
 	let s:pomodoro_started = 2
 	call pomo#notify()
 	let msg = "Great, pomodoro " . s:pomo_name . " is finished!\nNow, do you want to take a break for " . g:pomodoro_time_slack . " minutes?"
 	let choice = confirm(msg, "&Yes\n&No", 1)
-	" TODO-[RM]-(Sat Sep 23 2017 16:28): 
-	" - Log stuff in a not OS dependent way.
-	if exists("g:pomodoro_log_file")
-		exe "!echo 'Pomodoro " . s:pomo_name . " ended at " . strftime("%c") . 
-					\ ", duration: " . g:pomodoro_time_work . " minutes' >> " . g:pomodoro_log_file
-	endif
 	if choice == 2
 		let s:pomodoro_started = 0
 		return
@@ -103,6 +99,12 @@ function! pomo#restart(timer) abort
 	elseif choice == 3
 		let s:pomo_name = input("Please enter new pomodoro name: ", s:pomo_name)
 		exec "PomodoroStart " . s:pomo_name
+	endif
+endfunction
+
+function! pomo#log(msg) abort
+	if exists("g:pomodoro_log_file")
+		call writefile([a:msg], g:pomodoro_log_file, "a")
 	endif
 endfunction
 

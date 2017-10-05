@@ -20,7 +20,7 @@ endif
 
 let g:pomodoro_loaded = 1
 
-if !exists('*timer_start')
+if !has('timers')
 	echo 'Vim/Neovim doesnt not have support for timers. Ergo plugin will not work'
 	finish
 endif
@@ -35,10 +35,6 @@ endif
 
 if !exists('g:pomodoro_time_slack')
   let g:pomodoro_time_slack = 5
-endif
-
-if exists('g:pomodoro_maps')
-	nmap <F7> <ESC>:PomodoroStart<CR>
 endif
 
 let s:save_cpo = &cpo

@@ -1,0 +1,112 @@
+*pomodoro.txt*	For Vim version 8.0 and above. Last change: 2017-10-04
+
+		    POMODORO REFERENCE MANUAL~
+				by~
+		 Reinaldo Molina<rmolin88@gmail.com>~
+
+    Overview		    |pomodoro-overview|
+    Usage		    |pomodoro-usage|
+    Commands		    |pomodoro-commands|
+    Configuration	    |pomodoro-configuration|
+	 Statusline	    |pomodoro-statusline|
+	 Lightline	    |pomodoro-lightline|
+
+
+==============================================================================
+OVERVIEW						 *pomodoro-overview*
+This is a plugin for the Pomodoro time management technique. This is a fork
+that mitigates some issues with the original plugin.
+
+It requires Vim 8/Neovim new ||timers|| features.
+
+==============================================================================
+USAGE							*pomodoro-usage*
+The usage of pomodoro is simple. `:PomodoroStart [pomodoro_name]` starts a new
+pomodoro.  The parameter pomodoro_name is optional. After a pomodoro has
+ended, a confirmation dialog will remind you to take a break. When the break
+has ended, another dialog will ask you if you want to start a new pomodoro.
+Furthermore, the remaining time of a pomodoro can be displayed in the
+statusline of vim.
+
+If you do not want pomodoro.vim to use popup windows but text dialogs inside
+Vim, add to your |gvimrc|. >
+    set guioptions+=c 
+<
+Note: that this will globally disable popup notification windows in
+Vim.
+
+Also, in addition to the default notifications inside vim, pomodoro.vim allows
+you to add further external notifications, such as sounds, system-notification
+popups etc.
+
+==============================================================================
+COMMANDS					     *pomodoro-commands*
+
+:PomodoroStart {name}				    *:PomodoroStart*
+		Starts a pomodoro, with the optional parameter {name}
+
+:PomodoroStop					    *:PomodoroStop*
+		Stops an ongoing pomodoro
+
+:PomodoroStatus					    *:PomodoroStop*
+		Displays the status of an ongoing pomodoro
+==============================================================================
+CONFIGURATION					     *pomodoro-configuration*
+
+The following options help configure pomodoro.vim 
+
+						    *g:pomodoro_time_work*
+Duration of a pomodoro in minutes (default: 25) >
+    let g:pomodoro_time_work = 25
+<
+
+						    *g:pomodoro_time_slack*
+Duration of a break in minutes (default: 5) >
+    let g:pomodoro_time_slack = 5 
+<
+						    *g:pomodoro_log_file*
+Path to the pomodoro log file (default: '', no log) >
+    let g:pomodoro_log_file = "~/.cache/pomodoro.log"  " for unix
+    let g:pomodoro_log_file = $TEMP . "/pomodoro.log"  " for windows
+<
+
+Note: Original plugin had a default mapping like the one below, that was
+removed. >
+    nmap <F7> <ESC>:PomodoroStart<CR>
+<
+----------------------------------------------------------------------------
+STATUSLINE					    *pomodoro-statusline* 
+
+To display the remaining time of a pomodoro in your 'statusline', add to your
+|vimrc|  >
+    set statusline=%#ErrorMsg#%{pomo#status_bar()}%#StatusLine# 
+<
+This will display the message in red in your 'statusline'. Alternatively, you
+could do: >
+    set statusline=%{pomo#status_bar()}%
+<
+						*g:pomodoro_show_time_remaining*
+If pomodoro message in the 'statusline' seems to be taking too much space,
+then this option can be set to 0. Example message when the option is 1, which
+is the default value. >
+    Pomodoro <name> started (remaining: <x> minutes)
+<
+When the option is 0 the message is: >
+    Pomodoro <name> active
+<
+
+----------------------------------------------------------------------------
+LIGHTLINE					    *pomodoro-lightline* 
+
+In case that you use the |lightline| plugin. This could be a sample
+configuration: >
+
+    if !exists('g:lightline')
+	let g:lightline = {}
+    endif
+    let g:lightline.active.left[1] += [ 'pomodoro' ]
+    let g:lightline.component["pomodoro"] = '%{pomo#status_bar()}'
+    let g:lightline.component_visible_condition["pomodoro"] = '(!empty(pomo#status_bar()))'
+
+
+vim:tw=78:ts=8:ft=help:norl:
