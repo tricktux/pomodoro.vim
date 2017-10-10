@@ -10,6 +10,7 @@
     Configuration	    |pomodoro-configuration|
 	 Statusline	    |pomodoro-statusline|
 	 Lightline	    |pomodoro-lightline|
+    Bugs		    |pomodoro-bugs|
 
 
 ==============================================================================
@@ -104,9 +105,19 @@ configuration: >
     if !exists('g:lightline')
 	let g:lightline = {}
     endif
+    if !exists('g:lightline.component')
+	let g:lightline.component = {}
+    endif
+    if !exists('g:lightline.component_visible_condition')
+	let g:lightline.component_visible_condition = {}
+    endif
     let g:lightline.active.left[1] += [ 'pomodoro' ]
     let g:lightline.component["pomodoro"] = '%{pomo#status_bar()}'
     let g:lightline.component_visible_condition["pomodoro"] = '(!empty(pomo#status_bar()))'
 
+==============================================================================
+BUGS							 *pomodoro-bugs*
+
+Open a bug in https://github.com/rmolin88/pomodoro.vim/issues
 
 vim:tw=78:ts=8:ft=help:norl:

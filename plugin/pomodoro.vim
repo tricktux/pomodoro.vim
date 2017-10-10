@@ -14,16 +14,16 @@
 " 	g:pomodoro_time_slack 	- 	Duration of a break 
 " 	g:pomodoro_log_file 	- 	Path to log file
 
-if exists("g:pomodoro_loaded") && g:pomodoro_loaded
+if exists("g:loaded_pomodoro")
   finish
 endif
-
-let g:pomodoro_loaded = 1
 
 if !has('timers')
 	echo 'Vim/Neovim doesnt not have support for timers. Ergo plugin will not work'
 	finish
 endif
+
+let g:loaded_pomodoro = 1
 
 if !exists('g:pomodoro_show_time_remaining')
 	let g:pomodoro_show_time_remaining = 1 
