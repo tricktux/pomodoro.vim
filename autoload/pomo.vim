@@ -7,6 +7,9 @@ let s:pomo_id = 0
 let s:pomo_name = ''
 let s:pomodoro_started = 0
 let s:pomodoro_started_at = -1 
+let s:pomos_today = {}
+let s:date_fmt = "%a %d %b %Y"
+let s:time_fmt = "%I:%M:%S %P"
 
 function! pomo#notify() abort
 	if exists("g:pomodoro_notification_cmd") 
@@ -73,18 +76,38 @@ function! pomo#start(name) abort
 endfunction
 
 function! pomo#rest(timer) abort
-	let msg = "Pomodoro " . s:pomo_name . " ended at " . strftime("%c") . 
+	let msg = "Pomodoro " . s:pomo_name . " ended at " . strftime(s:date_fmt . " " . s:time_fmt) . 
 				\ ", duration: " . g:pomodoro_time_work . " minutes"
 	call pomo#log(msg)
 	let s:pomodoro_started = 2
 	call pomo#notify()
-	let msg = "Great, pomodoro " . s:pomo_name . " is finished!\nNow, do you want to take a break for " . g:pomodoro_time_slack . " minutes?"
-	let choice = confirm(msg, "&Yes\n&No", 1)
-	if choice == 2
+
+	" Compose msg for break
+	let msg = "Great, pomodoro " . s:pomo_name . " is finished!\n"
+	let msg_normal_break = "Now, do you want to take a break for " . g:pomodoro_time_slack . " minutes?"
+	let msg_reward = "Now would you break for " . g:pomodoro_time_reward . " minutes?"
+	let pomos = pomo#GetNumPomosToday()
+	if pomos > -1
+		let msg .= "Congratulations! You have finished " . pomos . " today\n"
+	endif
+
+	if pomos % g:pomodoros_before_reward == 0
+		let break = g:pomodoro_time_reward
+		let choice = confirm(msg . msg_reward, "&Yes\n&No\nSkip Break", 1)
+	else
+		let break = g:pomodoro_time_slack
+		let choice = confirm(msg . msg_normal_break, "&Yes\n&No\nSkip Break", 1)
+	endif
+
+	if choice == 1
+		let s:pomo_id = timer_start(g:pomodoro_time_slack * 60 * 1000, 'pomo#restart')
+		return
+	elseif choice == 2
 		let s:pomodoro_started = 0
 		return
+	else
+		exec "PomodoroStart " . s:pomo_name
 	endif
-	let s:pomo_id = timer_start(g:pomodoro_time_slack * 60 * 1000, 'pomo#restart')
 endfunction
 
 function! pomo#restart(timer) abort
@@ -106,6 +129,30 @@ function! pomo#log(msg) abort
 	if exists("g:pomodoro_log_file")
 		call writefile([a:msg], g:pomodoro_log_file, "a")
 	endif
+endfunction
+
+function! pomo#GetNumPomosToday()
+	if !exists("g:pomodoro_log_file")
+		return -1 " No logging happening
+	endif
+
+	try
+		let log = readfile(g:pomodoro_log_file)
+	catch
+		return -2
+	endtry
+	if empty(log)
+		return -3
+	endif
+
+	let num = 0
+	let search = strftime(s:date_fmt)
+	for line in log
+		if line =~# search
+			let num += 1
+		endif
+	endfor
+	return num
 endfunction
 
 " vim:tw=78:ts=2:sts=2:sw=2:
