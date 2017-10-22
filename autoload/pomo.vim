@@ -69,7 +69,7 @@ function! pomo#start(name) abort
 	let ch = confirm(msg, "&Stop\n&Restart\n&Cancel", 3)
 	if ch == 1
 		call pomo#stop()
-	if ch == 2
+	elseif ch == 2
 		call pomo#stop()
 		call pomo#start(s:pomo_name)
 	endif
@@ -106,7 +106,8 @@ function! pomo#rest(timer) abort
 		let s:pomodoro_started = 0
 		return
 	else
-		exec "PomodoroStart " . s:pomo_name
+		call pomo#stop()
+		call pomo#start(s:pomo_name)
 	endif
 endfunction
 
