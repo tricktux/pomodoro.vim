@@ -9,7 +9,8 @@ let s:pomodoro_started = 0
 let s:pomodoro_started_at = -1 
 let s:pomos_today = {}
 let s:date_fmt = "%a %d %b %Y"
-let s:time_fmt = "%I:%M:%S %P"
+" This fmt seems to work well in unix and win systems
+let s:time_fmt = "%H:%M:%S"
 
 function! pomo#notify() abort
 	if exists("g:pomodoro_notification_cmd") 
@@ -59,7 +60,7 @@ function! pomo#start(name) abort
 		let s:pomo_id = timer_start(g:pomodoro_time_work * 60 * 1000, function('pomo#rest'))
 		let s:pomodoro_started_at = localtime()
 		let s:pomodoro_started = 1 
-		echom "Pomodoro Started at: " . strftime('%I:%M:%S %m/%d/%Y')
+		echom "Pomodoro Started at: " . strftime(s:date_fmt . " " . s:time_fmt)
 		return
 	elseif s:pomodoro_started == 1
 		let msg = 'Pomodoro ' . s:pomo_name . ' is active'
@@ -87,7 +88,7 @@ function! pomo#rest(timer) abort
 	let msg_normal_break = "Now, do you want to take a break for " . g:pomodoro_time_slack . " minutes?"
 	let msg_reward = "Now would you break for " . g:pomodoro_time_reward . " minutes?"
 	let pomos = pomo#GetNumPomosToday()
-	if pomos > -1
+	if pomos > 0
 		let msg .= "Congratulations! You have finished " . pomos . " today\n"
 	endif
 
