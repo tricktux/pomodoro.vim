@@ -18,7 +18,7 @@ let s:pomo_longpause_icon = "\ue006"
 let s:break_time = 0
 
 function! pomo#notify() abort
-	if exists("g:pomodoro_notification_cmd") 
+	if exists('g:pomodoro_notification_cmd') 
 	  call system(g:pomodoro_notification_cmd)
 	endif
 endfunction
@@ -74,7 +74,7 @@ function! pomo#start(name) abort
 		let s:pomo_id = timer_start(g:pomodoro_time_work * 60 * 1000, function('pomo#rest'))
 		let s:pomodoro_started_at = localtime()
 		let s:pomo_status = 1 
-		echom "Pomodoro Started at: " . strftime(s:date_fmt . " " . s:time_fmt)
+		echom 'Pomodoro Started at: ' . strftime(s:date_fmt . ' ' . s:time_fmt)
 		return
 	elseif s:pomo_status == 1
 		let msg = 'Pomodoro ' . s:pomo_name . ' is active'
@@ -91,19 +91,19 @@ function! pomo#start(name) abort
 endfunction
 
 function! pomo#rest(timer) abort
-	let msg = "Pomodoro " . s:pomo_name . " ended at " . strftime(s:date_fmt . " " . s:time_fmt) . 
-				\ ", duration: " . g:pomodoro_time_work . " minutes"
+	let msg = 'Pomodoro ' . s:pomo_name . ' ended at ' . strftime(s:date_fmt . ' ' . s:time_fmt) . 
+				\ ', duration: ' . g:pomodoro_time_work . ' minutes'
 	call pomo#log(msg)
 	let s:pomo_status = 2
 	call pomo#notify()
 
 	" Compose msg for break
-	let msg = "Great, pomodoro " . s:pomo_name . " is finished!\n"
-	let msg_normal_break = "Now, do you want to take a break for " . g:pomodoro_time_slack . " minutes?"
-	let msg_reward = "Now would you break for " . g:pomodoro_time_reward . " minutes?"
+	let msg = 'Great, pomodoro ' . s:pomo_name . ' is finished!\n'
+	let msg_normal_break = 'Now, do you want to take a break for ' . g:pomodoro_time_slack . ' minutes?'
+	let msg_reward = 'Now would you break for ' . g:pomodoro_time_reward . ' minutes?'
 	let pomos = pomo#get_num_pomos_today()
 	if pomos > 0
-		let msg .= "Congratulations! You have finished " . pomos . " today\n"
+		let msg .= 'Congratulations! You have finished ' . pomos . ' today\n'
 	endif
 
 	if pomos % g:pomodoros_before_reward == 0
@@ -115,7 +115,7 @@ function! pomo#rest(timer) abort
 	endif
 
 	if choice == 1
-		let s:pomo_id = timer_start(break * 60 * 1000, 'pomo#restart')
+		let s:pomo_id = timer_start(s:break_time * 60 * 1000, 'pomo#restart')
 		return
 	elseif choice == 2
 		let s:pomo_status = 0
@@ -129,27 +129,27 @@ endfunction
 function! pomo#restart(timer) abort
 	let s:pomo_status = 0
 	call pomo#notify()
-	let msg = s:break_time . " minutes break is over... Feeling rested?\nWant to start another ". 
-				\ s:pomo_name . " pomodoro?"
+	let msg = s:break_time . ' minutes break is over... Feeling rested?\nWant to start another '. 
+				\ s:pomo_name . ' pomodoro?'
 	let choice = confirm(msg, "&Yes\n&No\n&Change the name", 1)
 	if choice == 1
-		exec "PomodoroStart " . s:pomo_name
+		exec 'PomodoroStart ' . s:pomo_name
 	elseif choice == 2
 		let s:pomo_status = 0
 	elseif choice == 3
-		let s:pomo_name = input("Please enter new pomodoro name: ", s:pomo_name)
-		exec "PomodoroStart " . s:pomo_name
+		let s:pomo_name = input('Please enter new pomodoro name: ', s:pomo_name)
+		exec 'PomodoroStart ' . s:pomo_name
 	endif
 endfunction
 
 function! pomo#log(msg) abort
-	if exists("g:pomodoro_log_file")
+	if exists('g:pomodoro_log_file')
 		call writefile([a:msg], g:pomodoro_log_file, "a")
 	endif
 endfunction
 
-function! pomo#get_num_pomos_today()
-	if !exists("g:pomodoro_log_file")
+function! pomo#get_num_pomos_today() abort
+	if !exists('g:pomodoro_log_file')
 		return -1 " No logging happening
 	endif
 
