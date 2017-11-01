@@ -24,7 +24,11 @@ function! pomo#notify() abort
 endfunction
 
 function! pomo#remaining_time() abort
-	return (g:pomodoro_time_work * 60 - abs(localtime() - s:pomodoro_started_at)) / 60
+	if s:pomo_status == 1
+		return (g:pomodoro_time_work * 60 - abs(localtime() - s:pomodoro_started_at)) / 60
+	elseif s:pomo_status > 1
+		return (s:break_time * 60 - abs(localtime() - s:pomodoro_started_at)) / 60
+	endif
 endfunction
 
 function! pomo#status() abort
@@ -98,12 +102,12 @@ function! pomo#rest(timer) abort
 	call pomo#notify()
 
 	" Compose msg for break
-	let msg = 'Great, pomodoro ' . s:pomo_name . ' is finished!\n'
+	let msg = 'Great, pomodoro ' . s:pomo_name . " is finished!\n"
 	let msg_normal_break = 'Now, do you want to take a break for ' . g:pomodoro_time_slack . ' minutes?'
 	let msg_reward = 'Now would you break for ' . g:pomodoro_time_reward . ' minutes?'
 	let pomos = pomo#get_num_pomos_today()
 	if pomos > 0
-		let msg .= 'Congratulations! You have finished ' . pomos . ' today\n'
+		let msg .= 'Congratulations! You have finished ' . pomos . " today\n"
 	endif
 
 	if pomos % g:pomodoros_before_reward == 0
@@ -115,6 +119,9 @@ function! pomo#rest(timer) abort
 	endif
 
 	if choice == 1
+		if s:break_time == g:pomodoro_time_reward
+			let s:pomo_status = 3
+		endif
 		let s:pomo_id = timer_start(s:break_time * 60 * 1000, 'pomo#restart')
 		return
 	elseif choice == 2
@@ -129,7 +136,7 @@ endfunction
 function! pomo#restart(timer) abort
 	let s:pomo_status = 0
 	call pomo#notify()
-	let msg = s:break_time . ' minutes break is over... Feeling rested?\nWant to start another '. 
+	let msg = s:break_time . " minutes break is over... Feeling rested?\nWant to start another ". 
 				\ s:pomo_name . ' pomodoro?'
 	let choice = confirm(msg, "&Yes\n&No\n&Change the name", 1)
 	if choice == 1
