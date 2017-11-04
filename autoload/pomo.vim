@@ -19,7 +19,11 @@ let s:break_time = 0
 
 function! pomo#notify() abort
 	if exists('g:pomodoro_notification_cmd') 
-	  call system(g:pomodoro_notification_cmd)
+	  if exists('*jobstart') 
+			call jobstart(g:pomodoro_notification_cmd)
+		else
+			call system(g:pomodoro_notification_cmd)
+		endif
 	endif
 endfunction
 
