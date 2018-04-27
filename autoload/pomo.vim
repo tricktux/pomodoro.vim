@@ -6,7 +6,7 @@
 let s:pomo_id = 0
 let s:pomo_name = ''
 let s:pomo_status = 0
-let s:pomodoro_started_at = -1 
+let s:pomodoro_started_at = -1
 let s:pomos_today = {}
 let s:date_fmt = "%a %d %b %Y"
 " This fmt seems to work well in unix and win systems
@@ -18,8 +18,8 @@ let s:pomo_longpause_icon = "\ue006"
 let s:break_time = 0
 
 function! pomo#notify() abort
-	if exists('g:pomodoro_notification_cmd') 
-	  if exists('*jobstart') 
+	if exists('g:pomodoro_notification_cmd')
+	  if exists('*jobstart')
 			call jobstart(g:pomodoro_notification_cmd)
 		else
 			call system(g:pomodoro_notification_cmd)
@@ -41,8 +41,8 @@ function! pomo#status() abort
 	elseif s:pomo_status == 1
 		return 'Pomodoro ' . s:pomo_name . ' started (remaining: ' . pomo#remaining_time() . ' minutes)'
 	elseif s:pomo_status > 1
-		return 'Pomodoro ' . 
-					\ (s:pomo_status == 2 ? 'short' : 'long') . 
+		return 'Pomodoro ' .
+					\ (s:pomo_status == 2 ? 'short' : 'long') .
 					\ ' break started'
 	endif
 endfunction
@@ -55,11 +55,11 @@ function! pomo#status_bar() abort
 	elseif s:pomo_status == 1
 		return (use_icons ? s:pomo_ongoing_icon . ' ' : 'Pomodoro ') .
 					\ (empty(s:pomo_name) ? '' : s:pomo_name) .
-					\ (use_icons ? '' : 'started ') . 
+					\ (use_icons ? '' : 'started ') .
 					\ (show_time ? '(' . pomo#remaining_time() . ' mins)': '')
 	elseif s:pomo_status > 1
 		if s:pomo_status == 2
-			return (use_icons ? s:pomo_shortpause_icon . '('. pomo#remaining_time() . ' mins)' 
+			return (use_icons ? s:pomo_shortpause_icon . '('. pomo#remaining_time() . ' mins)'
 						\ : 'Pomodoro on short break')
 		else
 			return (use_icons ? s:pomo_longpause_icon . '('. pomo#remaining_time() . ' mins)'
@@ -81,7 +81,7 @@ function! pomo#start(name) abort
 		let s:pomo_name = a:name
 		let s:pomo_id = timer_start(g:pomodoro_time_work * 60 * 1000, function('pomo#rest'))
 		let s:pomodoro_started_at = localtime()
-		let s:pomo_status = 1 
+		let s:pomo_status = 1
 		echom 'Pomodoro Started at: ' . strftime(s:date_fmt . ' ' . s:time_fmt)
 		return
 	elseif s:pomo_status == 1
@@ -89,6 +89,7 @@ function! pomo#start(name) abort
 	else " s:pomo_status > 1
 		let msg = 'Pomodoro ' . s:pomo_name . ' is on break'
 	endif
+
 	let ch = confirm(msg, "&Stop\n&Restart\n&Cancel", 3)
 	if ch == 1
 		call pomo#stop()
@@ -99,7 +100,7 @@ function! pomo#start(name) abort
 endfunction
 
 function! pomo#rest(timer) abort
-	let msg = 'Pomodoro ' . s:pomo_name . ' ended at ' . strftime(s:date_fmt . ' ' . s:time_fmt) . 
+	let msg = 'Pomodoro ' . s:pomo_name . ' ended at ' . strftime(s:date_fmt . ' ' . s:time_fmt) .
 				\ ', duration: ' . g:pomodoro_time_work . ' minutes'
 	call pomo#log(msg)
 	let s:pomo_status = 2
@@ -126,11 +127,10 @@ function! pomo#rest(timer) abort
 		if s:break_time == g:pomodoro_time_reward
 			let s:pomo_status = 3
 		endif
+		let s:pomodoro_started_at = localtime()
 		let s:pomo_id = timer_start(s:break_time * 60 * 1000, 'pomo#restart')
-		return
 	elseif choice == 2
-		let s:pomo_status = 0
-		return
+		call pomo#stop()
 	else
 		call pomo#stop()
 		call pomo#start(s:pomo_name)
@@ -140,7 +140,7 @@ endfunction
 function! pomo#restart(timer) abort
 	let s:pomo_status = 0
 	call pomo#notify()
-	let msg = s:break_time . " minutes break is over... Feeling rested?\nWant to start another ". 
+	let msg = s:break_time . " minutes break is over... Feeling rested?\nWant to start another ".
 				\ s:pomo_name . ' pomodoro?'
 	let choice = confirm(msg, "&Yes\n&No\n&Change the name", 1)
 	if choice == 1
@@ -182,5 +182,3 @@ function! pomo#get_num_pomos_today() abort
 	endfor
 	return num
 endfunction
-
-" vim:tw=78:ts=2:sts=2:sw=2:
