@@ -21,6 +21,8 @@ function! pomo#notify() abort
 	if exists('g:pomodoro_notification_cmd')
 	  if exists('*jobstart')
 			call jobstart(g:pomodoro_notification_cmd)
+		elseif exists('*job_start')
+			call job_start(g:pomodoro_notification_cmd)
 		else
 			call system(g:pomodoro_notification_cmd)
 		endif
