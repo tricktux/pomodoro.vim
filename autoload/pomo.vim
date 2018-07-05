@@ -3,6 +3,28 @@
 " Original Author:   Maximilian Nickel <max@inmachina.com>
 " License:  MIT License
 
+let s:pomo_status = {
+			\ 'inactive' : 0,
+			\ 'active' : 1,
+			\ 'small_break' : 2,
+			\ 'large_break' : 3,
+			\ }
+
+let s:pomo_icons = {
+			\ 'paused' : "\ue003 ",
+			\ 'ongoing' : "\ue003 ",
+			\ 'small_break' : "\ue005 ",
+			\ 'large_break' : "\ue006 ",
+			\ }
+
+let s:pomo = {
+			\ 'timer_id' : 0,
+			\ 'name' : '',
+			\ 'status' : 'inactive',
+			\ 'start_time' : '',
+			\ 'num_pomos_today' : 0,
+			\ }
+
 let s:pomo_id = 0
 let s:pomo_name = ''
 let s:pomo_status = 0
