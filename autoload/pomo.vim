@@ -50,21 +50,21 @@ function! pomo#status() abort
 endfunction
 
 function! pomo#status_bar() abort
-	let use_icons = get(g:, 'pomodoro_use_devicons', 0)
-	let show_time = get(g:, 'pomodoro_show_time_remaining', 0)
+	let l:use_icons = get(g:, 'pomodoro_use_devicons', 0)
+	let l:show_time = get(g:, 'pomodoro_show_time_remaining', 0)
 	if s:pomo_status == 0
 		return ''
 	elseif s:pomo_status == 1
-		return (use_icons ? s:pomo_ongoing_icon . ' ' : 'Pomodoro ') .
+		return (l:use_icons ? s:pomo_ongoing_icon . ' ' : 'Pomodoro ') .
 					\ (empty(s:pomo_name) ? '' : s:pomo_name) .
-					\ (use_icons ? '' : 'started ') .
-					\ (show_time ? '(' . pomo#remaining_time() . ' mins)': '')
+					\ (l:use_icons ? '' : ' started ') .
+					\ (l:show_time ? '(' . pomo#remaining_time() . ' mins)': '')
 	elseif s:pomo_status > 1
 		if s:pomo_status == 2
-			return (use_icons ? s:pomo_shortpause_icon . '('. pomo#remaining_time() . ' mins)'
+			return (l:use_icons ? s:pomo_shortpause_icon . '('. pomo#remaining_time() . ' mins)'
 						\ : 'Pomodoro on short break')
 		else
-			return (use_icons ? s:pomo_longpause_icon . '('. pomo#remaining_time() . ' mins)'
+			return (l:use_icons ? s:pomo_longpause_icon . '('. pomo#remaining_time() . ' mins)'
 						\ : 'Pomodoro on long break')
 		endif
 	endif
@@ -87,12 +87,12 @@ function! pomo#start(name) abort
 		echom 'Pomodoro Started at: ' . strftime(s:date_fmt . ' ' . s:time_fmt)
 		return
 	elseif s:pomo_status == 1
-		let msg = 'Pomodoro ' . s:pomo_name . ' is active'
+		let l:msg = 'Pomodoro ' . s:pomo_name . ' is active'
 	else " s:pomo_status > 1
-		let msg = 'Pomodoro ' . s:pomo_name . ' is on break'
+		let l:msg = 'Pomodoro ' . s:pomo_name . ' is on break'
 	endif
 
-	let ch = confirm(msg, "&Stop\n&Restart\n&Cancel", 3)
+	let ch = confirm(l:msg, "&Stop\n&Restart\n&Cancel", 3)
 	if ch == 1
 		call pomo#stop()
 	elseif ch == 2
@@ -102,27 +102,27 @@ function! pomo#start(name) abort
 endfunction
 
 function! pomo#rest(timer) abort
-	let msg = 'Pomodoro ' . s:pomo_name . ' ended at ' . strftime(s:date_fmt . ' ' . s:time_fmt) .
+	let l:msg = 'Pomodoro ' . s:pomo_name . ' ended at ' . strftime(s:date_fmt . ' ' . s:time_fmt) .
 				\ ', duration: ' . g:pomodoro_time_work . ' minutes'
-	call pomo#log(msg)
+	call pomo#log(l:msg)
 	let s:pomo_status = 2
 	call pomo#notify()
 
 	" Compose msg for break
-	let msg = 'Great, pomodoro ' . s:pomo_name . " is finished!\n"
-	let msg_normal_break = 'Now, do you want to take a break for ' . g:pomodoro_time_slack . ' minutes?'
-	let msg_reward = 'Now would you break for ' . g:pomodoro_time_reward . ' minutes?'
-	let pomos = pomo#get_num_pomos_today()
-	if pomos > 0
-		let msg .= 'Congratulations! You have finished ' . pomos . " today\n"
+	let l:msg = 'Great, pomodoro ' . s:pomo_name . " is finished!\n"
+	let l:msg_normal_break = 'Now, how would you like to take a break for ' . g:pomodoro_time_slack . ' minutes?'
+	let l:msg_reward = 'Now would you break for ' . g:pomodoro_time_reward . ' minutes?'
+	let l:pomos = pomo#get_num_pomos_today()
+	if l:pomos > 0
+		let l:msg .= 'Congratulations! You have finished ' . l:pomos . " today\n"
 	endif
 
-	if pomos % g:pomodoros_before_reward == 0
+	if l:pomos % g:pomodoros_before_reward == 0
 		let s:break_time = g:pomodoro_time_reward
-		let choice = confirm(msg . msg_reward, "&Yes\n&No\nSkip Break", 1)
+		let choice = confirm(l:msg . l:msg_reward, "&Yes\n&No\nSkip Break", 1)
 	else
 		let s:break_time = g:pomodoro_time_slack
-		let choice = confirm(msg . msg_normal_break, "&Yes\n&No\nSkip Break", 1)
+		let choice = confirm(l:msg . l:msg_normal_break, "&Yes\n&No\nSkip Break", 1)
 	endif
 
 	if choice == 1
