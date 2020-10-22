@@ -38,7 +38,7 @@ Add the following options to your `~/.vimrc` to configure vim-pomodoro
 
 To display the remaining time of a pomodoro in your statusline, add 
 
-	set statusline=%#ErrorMsg#%{PomodoroStatus()}%#StatusLine# 
+	set statusline=%#ErrorMsg#%{pomo#status_bar()}%#StatusLine# 
 
 to your `~/.vimrc` 
 
