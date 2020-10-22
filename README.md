@@ -1,7 +1,7 @@
 Vim-Pomodoro
 ============
 
-vim-pomodoro is a [(Neo)Vim](http://www.vim.org) plugin for the [Pomodoro time management technique](http://www.pomodorotechnique.com/).  This is a fork that mitigate some issues with the original plugin.
+vim-pomodoro is a [(Neo)Vim](http://www.vim.org) plugin for the [Pomodoro time management technique](http://www.pomodorotechnique.com/).  This is a fork that mitigate some issues with the [original plugin][0].
 
 It requires the `timers` feature.
 
@@ -60,3 +60,6 @@ The recommended installation method is via [vim-plug](https://github.com/junegun
 Add:
 
 	Plug 'tricktux/pomodoro.vim'
+  
+
+[0]:https://github.com/mnick/vim-pomodoro
