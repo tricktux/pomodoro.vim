@@ -59,4 +59,4 @@ Installation
 The recommended installation method is via [vim-plug](https://github.com/junegunn/vim-plug). 
 Add:
 
-	Plug 'tricktux/vim-pomodoro'
+	Plug 'tricktux/pomodoro.vim'
