@@ -56,17 +56,17 @@ function! pomo#status_bar() abort
 	if s:pomo_status == 0
 		return ''
 	elseif s:pomo_status == 1
-		return (l:use_icons ? s:pomo_ongoing_icon . ' ' : 'Pomodoro ') .
+		return (l:use_icons ? s:pomo_ongoing_icon . ' ' : 'p:') .
 					\ (empty(s:pomo_name) ? '' : s:pomo_name) .
-					\ (l:use_icons ? '' : ' started ') .
-					\ (l:show_time ? '(' . pomo#remaining_time() . ' mins)': '')
+					\ (l:use_icons ? '' : '') .
+					\ (l:show_time ? ' (' . pomo#remaining_time() . ' m)': '')
 	elseif s:pomo_status > 1
 		if s:pomo_status == 2
-			return (l:use_icons ? s:pomo_shortpause_icon . '('. pomo#remaining_time() . ' mins)'
-						\ : 'Pomodoro on short break')
+			return (l:use_icons ? s:pomo_shortpause_icon . '('. pomo#remaining_time() . ' m)'
+						\ : 'p:short break')
 		else
-			return (l:use_icons ? s:pomo_longpause_icon . '('. pomo#remaining_time() . ' mins)'
-						\ : 'Pomodoro on long break')
+			return (l:use_icons ? s:pomo_longpause_icon . '('. pomo#remaining_time() . ' m)'
+						\ : 'p:long break')
 		endif
 	endif
 endfunction
